@@ -29,7 +29,7 @@ GET         /user/logout                         Clear session (Protected)
 
 
 ### How to Run Locally
-Clone the repo: git clone []
+Clone the repo: git clone [https://github.com/KrishnaGhimire668/Authorization-MERN-project.git]
 Install dependencies: npm install (in both /frontend and /backend)
 Set up your .env: Add MONGO_URI, PORT=8000, and GMAIL_APP_PASSWORD.
 Run Backend: npm start
