@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2, ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
 
@@ -50,7 +50,16 @@ const Signup = () => {
   };
 
   return (
-    <section className="bg-green-100 min-h-screen flex items-center justify-center p-4">
+    <section className="bg-green-100 min-h-screen flex items-center justify-center p-4 relative">
+      <div className="absolute top-8 left-8">
+        <button 
+          onClick={() => navigate("/")}
+          className="flex items-center gap-2 text-green-700 hover:text-green-800 transition-colors font-semibold"
+        >
+          <ArrowLeft size={20} /> Back to Home
+        </button>
+      </div>
+
       <div className="w-full max-w-md space-y-6">
         <div className="text-center space-y-2">
           <h1 className="text-3xl font-bold tracking-tight text-green-600">

@@ -4,6 +4,7 @@ import connectDB from './db/database.js'
 import  userRoute  from './routes/userRoutes.js'
 import cors from 'cors'
 import  authRoute  from './routes/authRoutes.js'
+import  noteRoute  from './routes/noteRoutes.js'
 import './config/passport.js'
 
 
@@ -21,6 +22,7 @@ app.use(cors({
 
 app.use('/auth', authRoute)
 app.use('/user', userRoute)
+app.use('/notes', noteRoute)
 
 
 

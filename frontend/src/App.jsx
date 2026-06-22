@@ -11,6 +11,9 @@ import ForgotPassword from "./pages/ForgotPassword";
 import VerifyOTP from "./pages/VerifyOTP";
 import ChangePassword from "./pages/ChangePassword";
 import AuthSuccess from "./pages/AuthSuccess";
+import Dashboard from "./pages/Dashboard";
+import Profile from "./pages/Profile";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
   return (
@@ -27,10 +30,22 @@ const App = () => {
         <Route path="/verify-otp/:email" element={<VerifyOTP />} />
         <Route path="/change-password/:email" element={<ChangePassword />} />
         <Route path="/auth-success" element={<AuthSuccess />} />
-
-
-
-
+        <Route 
+          path="/dashboard" 
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/profile" 
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          } 
+        />
       </Routes>
     </>
   );

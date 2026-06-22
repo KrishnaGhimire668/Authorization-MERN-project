@@ -67,7 +67,16 @@ const VerifyOTP = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-green-100 items-center justify-center p-4">
+    <div className="min-h-screen flex flex-col bg-green-100 items-center justify-center p-4 relative">
+      <div className="absolute top-8 left-8">
+        <button 
+          onClick={() => navigate("/forgot-password")}
+          className="flex items-center gap-2 text-green-700 hover:text-green-800 transition-colors font-semibold"
+        >
+          <ArrowLeft size={20} /> Back
+        </button>
+      </div>
+
       <div className="w-full max-w-md space-y-6">
         
         {/* Header Section */}
@@ -145,13 +154,6 @@ const VerifyOTP = () => {
             )}
           </div>
 
-          {/* Footer */}
-          <div className="bg-gray-50 p-4 border-t border-gray-100 text-center">
-            <Link to="/forgot-password" size="sm" className="inline-flex items-center text-sm text-green-600 hover:underline font-medium">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Wrong email? Go back
-            </Link>
-          </div>
         </div>
 
     

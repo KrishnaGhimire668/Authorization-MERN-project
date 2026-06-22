@@ -36,7 +36,16 @@ const ForgotPassword = () => {
   };
 
   return (
-    <section className="bg-green-100 min-h-screen flex items-center justify-center p-4">
+    <section className="bg-green-100 min-h-screen flex items-center justify-center p-4 relative">
+      <div className="absolute top-8 left-8">
+        <button 
+          onClick={() => navigate("/login")}
+          className="flex items-center gap-2 text-green-700 hover:text-green-800 transition-colors font-semibold"
+        >
+          <ArrowLeft size={20} /> Back
+        </button>
+      </div>
+
       <div className="w-full max-w-md space-y-6">
         {/* Title Section */}
         <div className="text-center space-y-2">
@@ -120,15 +129,6 @@ const ForgotPassword = () => {
             )}
           </div>
 
-          <div className="bg-gray-50 p-4 border-t border-gray-100 text-center">
-            <Link
-              to="/login"
-              className="inline-flex items-center text-sm text-gray-500 hover:text-green-600 transition-colors"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Sign in
-            </Link>
-          </div>
         </div>
       </div>
     </section>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { Loader2, Lock, Eye, EyeOff } from 'lucide-react';
+import { Loader2, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const ChangePassword = () => {
@@ -61,7 +61,15 @@ const ChangePassword = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-green-100 px-4 font-sans">
+    <div className="min-h-screen flex items-center justify-center bg-green-100 px-4 font-sans relative">
+      <div className="absolute top-8 left-8">
+        <button 
+          onClick={() => navigate("/login")}
+          className="flex items-center gap-2 text-green-700 hover:text-green-800 transition-colors font-semibold"
+        >
+          <ArrowLeft size={20} /> Back
+        </button>
+      </div>
       <div className="bg-white shadow-xl rounded-2xl p-8 max-w-md w-full border border-gray-100">
         
         {/* Header */}
@@ -131,14 +139,6 @@ const ChangePassword = () => {
           </button>
         </div>
 
-        <div className="mt-6 text-center">
-          <button 
-            onClick={() => navigate('/login')}
-            className="text-sm text-gray-500 hover:text-green-600 transition-colors"
-          >
-            Back to Login
-          </button>
-        </div>
       </div>
     </div>
   );
