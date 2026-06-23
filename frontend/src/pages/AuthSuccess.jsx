@@ -8,11 +8,13 @@ import { useNavigate } from "react-router-dom";
 const AuthSuccess = () => {
   const { setUser } = getData();
   const navigate = useNavigate();
+  const params = new URLSearchParams(window.location.search);
+  const rawToken = params.get("token");
+  const cleanedToken = rawToken ? rawToken.replace(/\?+$/, "") : null;
 
   useEffect(() => {
     const handleAuth = async () => {
-      const params = new URLSearchParams(window.location.search);
-      let token = params.get("token");
+      let token = rawToken;
       
       if (token) {
         // 1. Clean up the token string
@@ -47,11 +49,17 @@ const AuthSuccess = () => {
       }
     };
     handleAuth();
-  }, [navigate, setUser]);
+  }, [navigate, rawToken, setUser]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-950 text-emerald-400">
-      <div className="animate-pulse font-mono">Verifying secure session...</div>
+      <div className="font-mono text-center">
+        <div className="animate-pulse">Verifying secure session...</div>
+        <div className="mt-4 text-xs text-emerald-300 break-all max-w-xl">
+          <div>API_BASE_URL: {API_BASE_URL}</div>
+          <div>token: {cleanedToken || "null"}</div>
+        </div>
+      </div>
     </div>
   );
 };
