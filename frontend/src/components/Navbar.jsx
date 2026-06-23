@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { getData } from "../context/userContext";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { API_BASE_URL } from "../config/api";
 
 const Navbar = () => {
   const { user, setUser } = getData();
@@ -14,7 +15,7 @@ const Navbar = () => {
 
   const logoutHandler = async () => {
     try {
-      const res = await axios.post(`http://localhost:5500/user/logout`, {}, {
+      const res = await axios.post(`${API_BASE_URL}/user/logout`, {}, {
         headers: {
           Authorization: `Bearer ${accessToken}`
         }

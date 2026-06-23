@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect } from "react";
+import { API_BASE_URL } from "../config/api";
 import { getData } from "../context/userContext";
 import { useNavigate } from "react-router-dom";
 
@@ -16,7 +17,7 @@ const AuthSuccess = () => {
       if (accessToken) {
         localStorage.setItem("accessToken", accessToken);
         try {
-          const res = await axios.get("http://localhost:5500/auth/me", {
+          const res = await axios.get(`${API_BASE_URL}/auth/me`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },

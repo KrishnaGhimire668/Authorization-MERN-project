@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import { API_BASE_URL } from "../config/api";
 import { Loader2, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -39,8 +40,7 @@ const ChangePassword = () => {
 
     try {
       setIsLoading(true);
-      // Using your local port 5500
-      const res = await axios.post(`http://localhost:5500/user/change-password/${email}`, {
+      const res = await axios.post(`${API_BASE_URL}/user/change-password/${email}`, {
         newPassword,
         confirmPassword
       });

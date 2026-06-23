@@ -4,6 +4,7 @@ import { Eye, EyeOff, Loader2, ArrowLeft } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { getData } from "../context/userContext";
+import { API_BASE_URL } from "../config/api";
 import Google from "../assets/googleLogo.png"
 
 const Login = () => {
@@ -30,7 +31,7 @@ const Login = () => {
     try {
       setIsLoading(true);
       const res = await axios.post(
-        `http://localhost:5500/user/login`,
+        `${API_BASE_URL}/user/login`,
         formData,
         {
           headers: { "Content-Type": "application/json" },
@@ -152,7 +153,7 @@ const Login = () => {
 
                 <button 
                   type="button" 
-                  onClick={() => window.open("http://localhost:5500/auth/google", "_self")} 
+                  onClick={() => window.open(`${API_BASE_URL}/auth/google`, "_self")} 
                   className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 border border-gray-300 rounded-md transition-all shadow-sm"
                 >
                   <img src={Google} alt="Google" className="w-5 h-5"/>

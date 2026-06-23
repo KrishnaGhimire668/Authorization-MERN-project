@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { getData } from "../context/userContext";
 import axios from "axios";
+import { API_BASE_URL } from "../config/api";
 import { Plus, Trash2, Save, FileText } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -21,7 +22,7 @@ const Dashboard = () => {
     } else {
       try {
         const token = localStorage.getItem("accessToken");
-        const res = await axios.get("http://localhost:5500/notes", {
+        const res = await axios.get(`${API_BASE_URL}/notes`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setNotes(res.data.notes || []);
@@ -48,7 +49,7 @@ const Dashboard = () => {
       try {
         const token = localStorage.getItem("accessToken");
         const res = await axios.post(
-          "http://localhost:5500/notes",
+          `${API_BASE_URL}/notes`,
           newNote,
           { headers: { Authorization: `Bearer ${token}` } }
         );

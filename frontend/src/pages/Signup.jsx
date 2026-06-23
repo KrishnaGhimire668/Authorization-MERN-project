@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Loader2, ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { API_BASE_URL } from "../config/api";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ const Signup = () => {
     try {
       setIsLoading(true);
       const res = await axios.post(
-        `http://localhost:5500/user/register`,
+        `${API_BASE_URL}/user/register`,
         formData,
         {
           headers: { "Content-Type": "application/json" },

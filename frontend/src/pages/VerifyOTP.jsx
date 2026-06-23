@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import { API_BASE_URL } from "../config/api";
 import { CheckCircle, Loader2, RotateCcw, ArrowLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -43,7 +44,7 @@ const VerifyOTP = () => {
 
     try {
       setIsLoading(true);
-      const res = await axios.post(`http://localhost:5500/user/verify-otp/${email}`, {
+      const res = await axios.post(`${API_BASE_URL}/user/verify-otp/${email}`, {
         otp: finalOtp,
       });
 
