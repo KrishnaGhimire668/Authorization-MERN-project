@@ -1,5 +1,6 @@
-import axios from "axios";
 import React, { useEffect } from "react";
+import { flushSync } from "react-dom";
+import axios from "axios";
 import { API_BASE_URL } from "../config/api";
 import { getData } from "../context/userContext";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 const AuthSuccess = () => {
   const { setUser } = getData();
   const navigate = useNavigate();
+
   useEffect(() => {
     const handleAuth = async () => {
       const params = new URLSearchParams(window.location.search);
@@ -26,20 +28,32 @@ const AuthSuccess = () => {
               Authorization: `Bearer ${token}`,
             },
           });
+          
           if (res.data.success) {
-            setUser(res.data.user);
-            navigate("/dashboard");
+            // Force state to update instantly before changing pages
+            flushSync(() => {
+              setUser(res.data.user);
+            });
+            navigate("/dashboard", { replace: true });
+          } else {
+            navigate("/login");
           }
         } catch (error) {
           console.error("Error fetching user:", error);
           navigate("/login");
         }
+      } else {
+        navigate("/login");
       }
     };
     handleAuth();
   }, [navigate, setUser]);
 
-  return <h1>Logging in...</h1>;
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-zinc-950 text-emerald-400">
+      <div className="animate-pulse font-mono">Verifying secure session...</div>
+    </div>
+  );
 };
 
 export default AuthSuccess;
