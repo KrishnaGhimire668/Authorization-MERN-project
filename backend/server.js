@@ -15,9 +15,20 @@ const app = express()
 const PORT = process.env.PORT || 8080
 
 app.use(express.json())
-const allowedOrigin = process.env.CLIENT_URL || 'http://localhost:5173';
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "https://authorization-mern-project-frontend.onrender.com",
+];
+
 app.use(cors({
-  origin: allowedOrigin,
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true
 }))
 
