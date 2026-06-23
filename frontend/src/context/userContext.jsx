@@ -11,7 +11,6 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem("accessToken");
-      const isGuest = localStorage.getItem("guest_mode") === "true";
       if (token) {
         try {
           const res = await axios.get(`${API_BASE_URL}/auth/me`, {
@@ -28,23 +27,22 @@ export const UserProvider = ({ children }) => {
           }
         } catch (error) {
           console.error("Session restoration failed:", error);
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("token");
+          if (error?.response?.status === 404) {
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("token");
+            setUser(null);
+            setLoading(false);
+            return;
+          }
         }
       }
 
-      if (isGuest) {
-        setUser({
-          username: "Guest User",
-          email: "guest@example.com",
-          isGuest: true,
-          avatar: "",
-        });
-        setLoading(false);
-        return;
-      }
-
-      setUser(null);
+      setUser({
+        username: "Guest User",
+        email: "guest@example.com",
+        isGuest: true,
+        avatar: "",
+      });
       setLoading(false);
     };
     fetchUser();

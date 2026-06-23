@@ -2,14 +2,17 @@ import React, { useState, useEffect, useRef } from "react";
 import { getData } from "../context/userContext";
 import axios from "axios";
 import { API_BASE_URL } from "../config/api";
-import { Plus, Trash2, Save, FileText } from "lucide-react";
+import { Plus, Trash2, Save, FileText, ArrowLeft, Pencil } from "lucide-react";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const { user } = getData();
+  const navigate = useNavigate();
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState({ title: "", content: "" });
   const isGuest = user?.isGuest === true;
+  const isLoggedIn = !!localStorage.getItem("accessToken") && !isGuest;
   const hasFetchedNotes = useRef(false);
 
   useEffect(() => {
@@ -19,29 +22,20 @@ const Dashboard = () => {
   }, []);
 
   const fetchNotes = async () => {
-    if (isGuest) {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      const res = await axios.get(`${API_BASE_URL}/notes`, { headers });
+      setNotes(res.data.notes || []);
+    } catch (error) {
+      console.error("Failed to fetch notes:", error);
       const localNotes = JSON.parse(localStorage.getItem("local_notes") || "[]");
       setNotes(localNotes);
-    } else {
-      try {
-        const token = localStorage.getItem("accessToken");
-        if (!token) {
-          setNotes([]);
-          return;
-        }
-        const res = await axios.get(`${API_BASE_URL}/notes`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setNotes(res.data.notes || []);
-      } catch (error) {
-        console.error("Failed to fetch notes:", error);
-        // Fallback to local if backend endpoint doesn't exist yet
-        setNotes([]);
-      }
     }
   };
 
   const handleSaveNote = async () => {
+    if (!isLoggedIn) return;
     if (!newNote.title || !newNote.content) {
       toast.error("Please fill in both title and content");
       return;
@@ -76,8 +70,19 @@ const Dashboard = () => {
     setNewNote({ title: "", content: "" });
   };
 
+  const editNote = (id) => {
+    if (!isLoggedIn) return;
+    const target = notes.find((n) => (n._id || n.id) === id);
+    if (!target) return;
+    const title = prompt("Edit title", target.title);
+    const content = prompt("Edit content", target.content);
+    if (title == null || content == null) return;
+    setNotes(notes.map((n) => ((n._id || n.id) === id ? { ...n, title, content } : n)));
+  };
+
   const deleteNote = (id) => {
-    const updatedNotes = notes.filter((n) => n.id !== id);
+    if (!isLoggedIn) return;
+    const updatedNotes = notes.filter((n) => (n._id || n.id) !== id);
     setNotes(updatedNotes);
     if (isGuest) {
       localStorage.setItem("local_notes", JSON.stringify(updatedNotes));
@@ -90,15 +95,21 @@ const Dashboard = () => {
       <div className="max-w-3xl mx-auto">
         <header className="mb-8 flex justify-between items-end">
           <div>
+            <button
+              onClick={() => navigate("/")}
+              className="mb-3 flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors"
+            >
+              <ArrowLeft size={16} /> Back to Home
+            </button>
             <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">System Workspace</h1>
             <p className="text-emerald-600/80 text-sm font-semibold mt-1">
-              {isGuest ? "Node: Guest (Local)" : "Node: Auth (Cloud)"}
+              {isLoggedIn ? "Node: Auth (Cloud)" : "Node: Guest (Read Only)"}
             </p>
           </div>
         </header>
 
         {/* Note Input */}
-        <div className="bg-white/90 backdrop-blur-xl rounded-2xl border-2 border-emerald-500/20 shadow-[0_8px_30px_rgb(16,185,129,0.05)] p-6 mb-10 transition-all duration-300 hover:border-emerald-500/40">
+        {isLoggedIn && <div className="bg-white/90 backdrop-blur-xl rounded-2xl border-2 border-emerald-500/20 shadow-[0_8px_30px_rgb(16,185,129,0.05)] p-6 mb-10 transition-all duration-300 hover:border-emerald-500/40">
           <input
             type="text"
             placeholder="Initialize Title..."
@@ -120,7 +131,7 @@ const Dashboard = () => {
               <Save size={16} /> Save Document
             </button>
           </div>
-        </div>
+        </div>}
 
         {/* Notes List */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -138,12 +149,20 @@ const Dashboard = () => {
                   </div>
                   <h3 className="font-bold text-slate-800 text-md truncate max-w-[150px]">{note.title}</h3>
                 </div>
-                <button
-                  onClick={() => deleteNote(note.id)}
-                  className="text-slate-300 hover:text-red-500 transition-colors p-1.5 hover:bg-red-50 rounded-lg"
-                >
-                  <Trash2 size={16} />
-                </button>
+                {isLoggedIn && <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => editNote(note._id || note.id)}
+                    className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-800 transition-colors"
+                  >
+                    <Pencil size={14} /> Edit
+                  </button>
+                  <button
+                    onClick={() => deleteNote(note._id || note.id)}
+                    className="flex items-center gap-1 text-xs text-red-400 hover:text-red-600 transition-colors"
+                  >
+                    <Trash2 size={14} /> Delete
+                  </button>
+                </div>}
               </div>
               <p className="text-slate-500 text-sm leading-relaxed whitespace-pre-wrap line-clamp-4">{note.content}</p>
             </div>
