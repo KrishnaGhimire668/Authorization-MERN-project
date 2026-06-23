@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken"
 import { isAuthenticated } from "../middleware/isAuthenticated.js";
 
 const router = express.Router();
-const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
+const clientUrl = "https://authorization-mern-project-frontend.onrender.com";
 
 router.get("/google", passport.authenticate("google", {scope:["profile", "email"]}))
 
