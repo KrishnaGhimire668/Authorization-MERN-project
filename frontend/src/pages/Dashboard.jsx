@@ -7,12 +7,11 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
-  const { user } = getData();
+  const { user, setUser } = getData();
   const navigate = useNavigate();
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState({ title: "", content: "" });
-  const isGuest = user?.isGuest === true;
-  const isLoggedIn = !!localStorage.getItem("accessToken") && !isGuest;
+  const isLoggedIn = !!user;
   const hasFetchedNotes = useRef(false);
 
   useEffect(() => {
@@ -41,31 +40,21 @@ const Dashboard = () => {
       return;
     }
 
-    if (isGuest) {
-      const updatedNotes = [...notes, { ...newNote, id: Date.now() }];
-      setNotes(updatedNotes);
-      localStorage.setItem("local_notes", JSON.stringify(updatedNotes));
-      toast.success("Note saved locally (Demo Mode)");
-    } else {
-      try {
-        const token = localStorage.getItem("accessToken");
-        if (!token) {
-          toast.error("Session not found. Please log in again.");
-          return;
-        }
-        const res = await axios.post(
-          `${API_BASE_URL}/notes/create`,
-          newNote,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setNotes([...notes, res.data.note]);
-        toast.success("Note saved to database");
-      } catch (error) {
-        toast.error("Cloud saving failed. Saving locally...");
-        // Temporary fallback
-        const updatedNotes = [...notes, { ...newNote, id: Date.now() }];
-        setNotes(updatedNotes);
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        toast.error("Session not found. Please log in again.");
+        return;
       }
+      const res = await axios.post(
+        `${API_BASE_URL}/notes/create`,
+        newNote,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setNotes([...notes, res.data.note]);
+      toast.success("Note saved to database");
+    } catch (error) {
+      toast.error("Cloud saving failed.");
     }
     setNewNote({ title: "", content: "" });
   };
@@ -84,10 +73,14 @@ const Dashboard = () => {
     if (!isLoggedIn) return;
     const updatedNotes = notes.filter((n) => (n._id || n.id) !== id);
     setNotes(updatedNotes);
-    if (isGuest) {
-      localStorage.setItem("local_notes", JSON.stringify(updatedNotes));
-    }
     toast.success("Note deleted");
+  };
+
+  const logoutHandler = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("accessToken");
+    setUser(null);
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -106,6 +99,14 @@ const Dashboard = () => {
               {isLoggedIn ? "Node: Auth (Cloud)" : "Node: Guest (Read Only)"}
             </p>
           </div>
+          {isLoggedIn && (
+            <button
+              onClick={logoutHandler}
+              className="text-sm bg-slate-900 text-white px-4 py-2 rounded-lg hover:bg-slate-700 transition-colors"
+            >
+              Logout
+            </button>
+          )}
         </header>
 
         {/* Note Input */}

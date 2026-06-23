@@ -18,7 +18,6 @@ export const UserProvider = ({ children }) => {
           });
           if (res.data.success) {
             setUser(res.data.user);
-            localStorage.removeItem("guest_mode");
             setLoading(false);
             return;
           } else {
@@ -30,19 +29,11 @@ export const UserProvider = ({ children }) => {
           if (error?.response?.status === 404) {
             localStorage.removeItem("accessToken");
             localStorage.removeItem("token");
-            setUser(null);
-            setLoading(false);
-            return;
           }
         }
       }
 
-      setUser({
-        username: "Guest User",
-        email: "guest@example.com",
-        isGuest: true,
-        avatar: "",
-      });
+      setUser(null);
       setLoading(false);
     };
     fetchUser();
