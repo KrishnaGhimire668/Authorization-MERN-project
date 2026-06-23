@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { getData } from "../context/userContext";
 import axios from "axios";
 import { API_BASE_URL } from "../config/api";
@@ -10,8 +10,11 @@ const Dashboard = () => {
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState({ title: "", content: "" });
   const isGuest = user?.isGuest || localStorage.getItem("guest_mode") === "true";
+  const hasFetchedNotes = useRef(false);
 
   useEffect(() => {
+    if (hasFetchedNotes.current) return;
+    hasFetchedNotes.current = true;
     fetchNotes();
   }, []);
 
@@ -49,7 +52,7 @@ const Dashboard = () => {
       try {
         const token = localStorage.getItem("accessToken");
         const res = await axios.post(
-          `${API_BASE_URL}/notes`,
+          `${API_BASE_URL}/notes/create`,
           newNote,
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -115,7 +118,7 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {notes.map((note) => (
             <div 
-              key={note.id} 
+              key={note._id || note.id} 
               className="bg-white/95 backdrop-blur-sm p-6 rounded-2xl border-2 border-emerald-500/10 shadow-[0_4px_20px_rgb(0,0,0,0.02)] hover:border-emerald-500 hover:shadow-[0_12px_24px_rgb(16,185,129,0.08)] hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden"
             >
                <div className="absolute top-0 right-0 w-16 h-16 bg-emerald-500/5 rounded-bl-full -mr-8 -mt-8 group-hover:bg-emerald-500/10 transition-colors" />

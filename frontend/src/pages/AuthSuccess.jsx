@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { flushSync } from "react-dom";
 import axios from "axios";
 import { API_BASE_URL } from "../config/api";
@@ -8,11 +8,15 @@ import { useNavigate } from "react-router-dom";
 const AuthSuccess = () => {
   const { setUser } = getData();
   const navigate = useNavigate();
-  const params = new URLSearchParams(window.location.search);
-  const rawToken = params.get("token");
+  const hasHandledAuth = useRef(false);
 
   useEffect(() => {
+    if (hasHandledAuth.current) return;
+    hasHandledAuth.current = true;
+
     const handleAuth = async () => {
+      const params = new URLSearchParams(window.location.search);
+      const rawToken = params.get("token");
       let token = rawToken;
       
       if (token) {
@@ -48,7 +52,7 @@ const AuthSuccess = () => {
       }
     };
     handleAuth();
-  }, [navigate, rawToken, setUser]);
+  }, [navigate, setUser]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-950 text-emerald-400">
