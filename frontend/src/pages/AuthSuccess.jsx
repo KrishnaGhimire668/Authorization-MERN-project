@@ -24,6 +24,7 @@ const AuthSuccess = () => {
         token = token.replace(/\?+$/, "");
         
         // 2. Save to BOTH keys so the whole app stays happy!
+        localStorage.removeItem("guest_mode");
         localStorage.setItem("token", token);
         localStorage.setItem("accessToken", token);
         
@@ -45,6 +46,8 @@ const AuthSuccess = () => {
           }
         } catch (error) {
           console.error("Error fetching user:", error);
+          localStorage.removeItem("token");
+          localStorage.removeItem("accessToken");
           navigate("/login");
         }
       } else {

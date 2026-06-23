@@ -9,7 +9,7 @@ const Dashboard = () => {
   const { user } = getData();
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState({ title: "", content: "" });
-  const isGuest = user?.isGuest || localStorage.getItem("guest_mode") === "true";
+  const isGuest = user?.isGuest === true;
   const hasFetchedNotes = useRef(false);
 
   useEffect(() => {
@@ -25,6 +25,10 @@ const Dashboard = () => {
     } else {
       try {
         const token = localStorage.getItem("accessToken");
+        if (!token) {
+          setNotes([]);
+          return;
+        }
         const res = await axios.get(`${API_BASE_URL}/notes`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -51,6 +55,10 @@ const Dashboard = () => {
     } else {
       try {
         const token = localStorage.getItem("accessToken");
+        if (!token) {
+          toast.error("Session not found. Please log in again.");
+          return;
+        }
         const res = await axios.post(
           `${API_BASE_URL}/notes/create`,
           newNote,

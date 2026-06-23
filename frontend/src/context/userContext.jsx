@@ -12,6 +12,26 @@ export const UserProvider = ({ children }) => {
     const fetchUser = async () => {
       const token = localStorage.getItem("accessToken");
       const isGuest = localStorage.getItem("guest_mode") === "true";
+      if (token) {
+        try {
+          const res = await axios.get(`${API_BASE_URL}/auth/me`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (res.data.success) {
+            setUser(res.data.user);
+            localStorage.removeItem("guest_mode");
+            setLoading(false);
+            return;
+          } else {
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("token");
+          }
+        } catch (error) {
+          console.error("Session restoration failed:", error);
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("token");
+        }
+      }
 
       if (isGuest) {
         setUser({
@@ -24,21 +44,7 @@ export const UserProvider = ({ children }) => {
         return;
       }
 
-      if (token) {
-        try {
-          const res = await axios.get(`${API_BASE_URL}/auth/me`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          if (res.data.success) {
-            setUser(res.data.user);
-          } else {
-            localStorage.removeItem("accessToken");
-          }
-        } catch (error) {
-          console.error("Session restoration failed:", error);
-          localStorage.removeItem("accessToken");
-        }
-      }
+      setUser(null);
       setLoading(false);
     };
     fetchUser();

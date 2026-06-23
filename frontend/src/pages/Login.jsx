@@ -39,8 +39,10 @@ const Login = () => {
       );
 
       if (res.data.success) {
+        localStorage.removeItem("guest_mode");
         navigate('/')
         setUser(res.data.user)
+        localStorage.setItem('token', res.data.accessToken)
         localStorage.setItem('accessToken', res.data.accessToken)
         toast.success(res.data.message || "Logged in successfully");
       }
